@@ -117,7 +117,7 @@ public class ChirpPlugin extends CordovaPlugin {
     Log.i(TAG, "Received action " + action);
 
     if (action.equals("start")) {
-      Log.d(TAG, "startSdk");
+      Log.d(TAG, "START SDK CHIRP");
       startSdk();
 
       final PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
@@ -125,6 +125,14 @@ public class ChirpPlugin extends CordovaPlugin {
       callbackContext.sendPluginResult(result);
       setListener(callbackContext);
     }
+    
+    if (action.equals("stop")) {
+      Log.d(TAG, "STOP SDK CHIRP");
+      stopSdk();
+      final PluginResult result = new PluginResult(PluginResult.Status.OK, true);
+      callbackContext.sendPluginResult(result);
+    }
+
     return true;
   }
 
@@ -149,7 +157,6 @@ public class ChirpPlugin extends CordovaPlugin {
 
         PluginResult result = new PluginResult(PluginResult.Status.OK, newPayload);
         result.setKeepCallback(true);
-        // listener.success(newPayload.toString());
         listener.sendPluginResult(result);
       }
     });
