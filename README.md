@@ -193,3 +193,6 @@ Este ejemplo es una adaptación del tutorial:
 ## Autor
 
 * **@TheCouk** # plugin-template
+
+
+#cordova plugin add D:\varios\ionic\ionic-cordova-plugin-template

@@ -27,14 +27,14 @@
 
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.INTERNET" />
-            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permission.RECORD_AUDIO" />
         </config-file>
-
+      
       <framework src="assets/mi.gradle" custom="true" type="gradleReference" />
-      <resource-file src="assets/chirp-connect-3.3.4.aar" target="libs/chirp-connect-3.3.4.aar" />
 
+      <resource-file src="assets/chirp-connect-3.3.4.aar" target="libs/chirp-connect-3.3.4.aar" />
       <source-file src="src/android/com/example/ChirpPlugin.java" target-dir="src/com/example/" />
+
     </platform>
 
     <!-- ios -->
