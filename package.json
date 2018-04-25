@@ -1,12 +1,13 @@
 {
-  "name": "cordova-plugin-plantilla",
+  "name": "chirp-plugin",
   "version": "1.0.0",
   "cordova": {
-    "id": "cordova-plugin-plantilla",
+    "id": "chirp-plugin",
     "platforms": [
       "android",
       "ios"
     ]
   },
-  "description": "Plantilla base para crear un Plugin personalizado"
+  "description": "Chirp Plugin",
+  "author": "Jefferson Rivera"
 }

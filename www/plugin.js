@@ -1,12 +1,12 @@
 
 var exec = require('cordova/exec');
 
-var PLUGIN_NAME = 'MiPlugin';
+var PLUGIN_NAME = 'ChirpPlugin';
 
-var MiPlugin = {
+var ChirpConnect = {
   saludo: function (name, successCallback, errorCallback){
         exec(successCallback, errorCallback, PLUGIN_NAME, "saludar", [name]);
   }
 };
 
-module.exports = MiPlugin;
+module.exports = ChirpConnect;

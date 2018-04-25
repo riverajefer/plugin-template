@@ -1,0 +1,11 @@
+repositories {
+    jcenter()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    compile 'io.chirp.connect:chirp-connect-3.3.4@aar'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+}

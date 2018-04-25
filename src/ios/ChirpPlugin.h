@@ -1,6 +1,7 @@
 #import <Cordova/CDVPlugin.h>
 
-@interface MiPlugin : CDVPlugin {
+@interface ChirpPlugin : CDVPlugin
+{
 }
 
 // Encabezados de las funciones del plugin

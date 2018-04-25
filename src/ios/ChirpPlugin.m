@@ -1,8 +1,8 @@
-#import "MiPlugin.h"
+#import "ChirpPlugin.h"
 
 #import <Cordova/CDVAvailability.h>
 
-@implementation MiPlugin
+@implementation ChirpPlugin
 
 - (void)pluginInitialize {
 }
