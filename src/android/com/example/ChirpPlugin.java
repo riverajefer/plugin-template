@@ -116,8 +116,8 @@ public class ChirpPlugin extends CordovaPlugin {
   public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
     Log.i(TAG, "Received action " + action);
 
-    if (action.equals("start")) {
-      Log.d(TAG, "START SDK CHIRP");
+    if (action.equals("listen")) {
+      Log.d(TAG, "LISTEN SDK CHIRP");
       startSdk();
 
       final PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
@@ -125,7 +125,7 @@ public class ChirpPlugin extends CordovaPlugin {
       callbackContext.sendPluginResult(result);
       setListener(callbackContext);
     }
-    
+
     if (action.equals("stop")) {
       Log.d(TAG, "STOP SDK CHIRP");
       stopSdk();
