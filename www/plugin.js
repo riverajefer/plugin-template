@@ -9,10 +9,7 @@ var ChirpPlugin = {
   },
   stop: function (successCallback, errorCallback){
         exec(successCallback, errorCallback, PLUGIN_NAME, "stop", []);
-  },
-  saludo: function (name, successCallback, errorCallback){
-        exec(successCallback, errorCallback, PLUGIN_NAME, "saludar", [name]);
-  }  
+  }
 };
 
 module.exports = ChirpPlugin;
