@@ -196,3 +196,18 @@ Este ejemplo es una adaptación del tutorial:
 
 
 #cordova plugin add D:\varios\ionic\ionic-cordova-plugin-template
+
+<!-- 
+ADD
+
+ionic cordova  platform add android
+ionic cordova plugin add D:/varios/ionic/ionic-cordova-plugin-template
+ionic cordova build android
+
+
+REMOVE
+cordova plugin remove chirp-plugin
+ionic cordova platform remove android
+
+
+ -->

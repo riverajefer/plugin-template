@@ -25,8 +25,6 @@ public class ChirpPlugin extends CordovaPlugin {
   private static final String TAG = "ChirpPlugin";
   private ChirpConnect chirpConnect;
   private static final int RESULT_REQUEST_RECORD_AUDIO = 1;
-  private Boolean startStopSdkBtnPressed = false;
-  private String lastChirp = "";
   private static final String LISTEN = "listen";
   private static CallbackContext listener;
   public static final String RECORD_AUDIO = Manifest.permission.RECORD_AUDIO;
@@ -34,17 +32,17 @@ public class ChirpPlugin extends CordovaPlugin {
   public void initialize(CordovaInterface cordova, CordovaWebView webView) {
     super.initialize(cordova, webView);
 
-    Log.d(TAG, "Inicializando ChirpPlugin");
-    Log.v("ChirpConnect Connect Version: ", ChirpConnect.getVersion());
+    if (cordova.hasPermission(RECORD_AUDIO)) {
+      initChirp();
+      chirpListener();
+    }
+
+  }
+
+  private void initChirp() {
 
     String APP_KEY = "0UMHyXAjqyWjWPl1Z5FeNtj6C";
     String APP_SECRET = "anr2ibeMxYx9MsYQcvEOZ51w6LVAK97SCMZFf22s1o0giHN2oA";
-
-    if (cordova.hasPermission(RECORD_AUDIO)) {
-      // search(executeArgs);
-    } else {
-      getReadPermission(RESULT_REQUEST_RECORD_AUDIO);
-    }
 
     chirpConnect = new ChirpConnect(cordova.getActivity(), APP_KEY, APP_SECRET);
 
@@ -57,25 +55,18 @@ public class ChirpPlugin extends CordovaPlugin {
           Log.e("setLicenceError", licenceError.getMessage());
           return;
         }
-        cordova.getActivity().runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-            // llamar el start acá
-            //startStopSdk();
-            Log.d(TAG, "startStopSdk");
-          }
-        });
       }
 
       @Override
       public void onError(ChirpError chirpError) {
         Log.e("getLicenceError", chirpError.getMessage());
       }
-    });
 
-    /**
-     * Key and secret initialisation
-     */
+    });
+  }
+
+  private void chirpListener() {
+
     chirpConnect.setListener(new ConnectEventListener() {
 
       @Override
@@ -109,16 +100,26 @@ public class ChirpPlugin extends CordovaPlugin {
       @Override
       public void onSystemVolumeChanged(int oldVolume, int newVolume) {
       }
-
     });
   }
 
   public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
+
     Log.i(TAG, "Received action " + action);
 
+    if (action.equals("start")) {
+      if (cordova.hasPermission(RECORD_AUDIO)) {
+      } else {
+        getReadPermission(RESULT_REQUEST_RECORD_AUDIO);
+      }
+    }
+
     if (action.equals("listen")) {
-      Log.d(TAG, "LISTEN SDK CHIRP");
-      startSdk();
+      if (cordova.hasPermission(RECORD_AUDIO)) {
+        startSdk();
+      } else {
+        getReadPermission(RESULT_REQUEST_RECORD_AUDIO);
+      }
 
       final PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
       result.setKeepCallback(true);
@@ -129,7 +130,7 @@ public class ChirpPlugin extends CordovaPlugin {
     if (action.equals("stop")) {
       Log.d(TAG, "STOP SDK CHIRP");
       stopSdk();
-      final PluginResult result = new PluginResult(PluginResult.Status.OK, true);
+      final PluginResult result = new PluginResult(PluginResult.Status.OK);
       callbackContext.sendPluginResult(result);
     }
 
@@ -137,7 +138,6 @@ public class ChirpPlugin extends CordovaPlugin {
   }
 
   public void setListener(CallbackContext callbackContext) {
-    Log.i("Notification", "Attaching callback context listener " + callbackContext);
     listener = callbackContext;
 
     PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
@@ -147,6 +147,46 @@ public class ChirpPlugin extends CordovaPlugin {
 
   protected void getReadPermission(int requestCode) {
     cordova.requestPermission(this, requestCode, RECORD_AUDIO);
+  }
+
+  public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) {
+    Log.v(TAG, "onRequestPermissionsResult");
+    switch (requestCode) {
+    case RESULT_REQUEST_RECORD_AUDIO: {
+      if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        Log.d(TAG, "PERMISSION_GRANTED STARTSDK");
+        initChirp();
+        chirpListener();
+        startSdk();
+      } else {
+        try {
+          PluginResult result = new PluginResult(PluginResult.Status.ERROR, "PERMISSION_DENIED_ERROR");
+          listener.sendPluginResult(result);
+        } catch (Exception e) {
+        }
+      }
+      return;
+    }
+    }
+  }
+
+  public void startSdk() {
+    if (chirpConnect.getConnectState() == ConnectState.AudioStateStopped) {
+      ChirpError error = chirpConnect.start();
+      Log.d(TAG, "START SDK CHIRP>>>");
+      if (error.getCode() > 0) {
+        Log.e("ConnectError: ", error.getMessage());
+        return;
+      }
+    }
+  }
+
+  public void stopSdk() {
+    ChirpError error = chirpConnect.stop();
+    if (error.getCode() > 0) {
+      Log.e("ConnectError: ", error.getMessage());
+      return;
+    }
   }
 
   public void updateLastPayload(final String newPayload) {
@@ -160,33 +200,6 @@ public class ChirpPlugin extends CordovaPlugin {
         listener.sendPluginResult(result);
       }
     });
-  }
-
-  public void stopSdk() {
-    ChirpError error = chirpConnect.stop();
-    if (error.getCode() > 0) {
-      Log.e("ConnectError: ", error.getMessage());
-      return;
-    }
-  }
-
-  public void startSdk() {
-    if (chirpConnect.getConnectState() == ConnectState.AudioStateStopped) {
-      ChirpError error = chirpConnect.start();
-      if (error.getCode() > 0) {
-        Log.e("ConnectError: ", error.getMessage());
-        return;
-      }
-    }
-  }
-
-  public void startStopSdk() {
-    startStopSdkBtnPressed = true;
-    if (chirpConnect.getConnectState() == ConnectState.AudioStateStopped) {
-      startSdk();
-    } else {
-      stopSdk();
-    }
   }
 
   public static String bytesToHex(byte[] in) {
